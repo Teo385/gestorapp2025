@@ -4,7 +4,7 @@ Si alguien se pone creativo y escribe una ruta que no existe, lo mando directo a
 
 Agregué 12 espacios nuevos y ahora la propiedad foto ya no es una sola imagen, sino un array. Eso me permite mostrar varias imágenes por espacio.
 
-Cuando entras a la parte de “booking” y le das en “agendar”, se abre un modal todo bonito que ahora tiene una descripción más larga y un carrusel de imágenes que cambia cada 5 segundos, al menos en los primeros dos elementos (después no porque pues… optimización).
+Cuando entras a la parte de “booking” y le das en “agendar”, se abre un modal todo bonito que ahora tiene una descripción más larga y un carrusel de imágenes que cambia cada 3 segundos, al menos en los primeros dos elementos (después no porque pues… optimización).
 
 Si alguien intenta colarse al Dashboard o al formulario de reservas sin pasar primero por “booking”, lo redirijo para allá. O sea, no se puede entrar a lo loco.
 

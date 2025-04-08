@@ -31,7 +31,7 @@ export function Booking() {
                 setCurrentImageIndex((prevIndex) =>
                     (prevIndex + 1) % selectedSpace.foto.length
                 );
-            }, 5000);
+            }, 3000);
         }
         return () => clearInterval(interval);
     }, [showModal, selectedSpace]);
