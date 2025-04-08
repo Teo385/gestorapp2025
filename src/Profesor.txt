@@ -1,0 +1,17 @@
+Profe, le cuento rapidito lo que tiene mi página ahora:
+
+Si alguien se pone creativo y escribe una ruta que no existe, lo mando directo a una pantalla de error y después de un ratito lo redirijo al home, para que no se quede perdido.
+
+Agregué 12 espacios nuevos y ahora la propiedad foto ya no es una sola imagen, sino un array. Eso me permite mostrar varias imágenes por espacio.
+
+Cuando entras a la parte de “booking” y le das en “agendar”, se abre un modal todo bonito que ahora tiene una descripción más larga y un carrusel de imágenes que cambia cada 5 segundos, al menos en los primeros dos elementos (después no porque pues… optimización).
+
+Si alguien intenta colarse al Dashboard o al formulario de reservas sin pasar primero por “booking”, lo redirijo para allá. O sea, no se puede entrar a lo loco.
+
+Los datos de los espacios (datosApi) solo se cargan una vez, después de eso todo se pasa con useNavigate, así que está todo bien optimizado.
+
+En el formulario y en el Dashboard se puede ver el nombre del espacio que estás reservando, así que siempre sabes qué estás haciendo.
+
+Lo más importante: el Dashboard se actualiza automáticamente después de cada reserva, así que no hay que recargar nada manualmente.
+
+y usa npm install

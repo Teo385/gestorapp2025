@@ -1,32 +1,33 @@
-import {Routes, Route} from "react-router-dom"
+import {Routes, Route, Outlet} from "react-router-dom"
 import {Home} from "../pages/Home/Home"
 import {DashBoard} from "../pages/DashBoard/Dashboard"
 import {Booking} from "../pages/Booking/Booking"
-
-import { Prueba } from "../pages/Prueba/Prueba"
 import { FormularioReserva } from "../common/FormularioReserva/FormularioReserva"
-
+import { Error } from "../pages/Error/Error"
 import { Menu } from "../common/Menu/Menu"
 
 
-
-export function Rutas(){
-
-    return(
-
-        <>
-
-            <Menu></Menu>
-
-            <Routes>
-                <Route path="/" element={<Home/>}></Route>
-                <Route path="/booking" element={<Booking/>}></Route>
-                <Route path="/dashboard" element={<DashBoard/>}></Route>
-                <Route path="/pepe" element={<Prueba/>}></Route>
-                <Route path="/formulario" element={<FormularioReserva/>}></Route>
-            </Routes>
-
-        </>
-    )
-
-}
+const RutasConMenu = () => {
+    return (
+      <>
+        <Menu />
+        <Outlet />
+      </>
+    );
+  };
+  
+  export default RutasConMenu;
+  
+  export function Rutas() {
+    return (
+      <Routes>
+        <Route path="/" element={<RutasConMenu />}>
+          <Route index element={<Home />} />
+          <Route path="/dashboard" element={<DashBoard />} />
+          <Route path="/booking" element={<Booking />} />
+          <Route path="/formulario" element={<FormularioReserva />} />
+        </Route>
+        <Route path="*" element={<Error />} />
+      </Routes>
+    );
+  }

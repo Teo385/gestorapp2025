@@ -15,38 +15,39 @@ export const Calendar = () => {
     })
 
   return (
-    <table>
 
-        <thead>
-            <tr>
-                <th>Hora</th>
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Hora</th>
+                    {
+                        dias.map((dia)=>{
+                            return <th>{dia}</th>
+                        })
+                    }
+                </tr>
+
+            </thead>
+            <tbody>
+
                 {
-                    dias.map((dia)=>{
-                        return <th>{dia}</th>
+                    horas.map((hora)=>{
+                        return <tr>
+                            
+                            <td>{hora}</td>
+                            {
+                                dias.map(function(dia){
+                                    return(
+                                        <td>oe</td>
+                                    )
+                                })
+                            }
+                            </tr>
                     })
                 }
-            </tr>
 
-        </thead>
-        <tbody>
-
-            {
-                horas.map((hora)=>{
-                    return <tr>
-                        
-                        <td>{hora}</td>
-                        {
-                            dias.map(function(dia){
-                                return(
-                                    <td>oe</td>
-                                )
-                            })
-                        }
-                        </tr>
-                })
-            }
-
-        </tbody>
-    </table>
+            </tbody>
+        </table>
   )
 }

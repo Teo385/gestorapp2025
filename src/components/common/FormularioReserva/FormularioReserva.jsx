@@ -1,135 +1,262 @@
-import { useState, useEffect } from "react"
-import { useLocation } from "react-router-dom"
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import { Modal, Button } from "react-bootstrap";
+import { useReservas } from "./Reserva";
+
 export function FormularioReserva() {
+  const [showModal, setShowModal] = useState(false);
+  const [selectedSpace, setSelectedSpace] = useState(null);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
+  const location = useLocation();
+  const { dia, hora, fecha, espacio } = location.state || {};
+  const { agregarReserva } = useReservas();
+  const navegador = useNavigate();
 
+  useEffect(() => {
+    if (!espacio) {
+      navegador("/booking");
+    }
+  }, [espacio, navegador]);
 
-    //1. Crear una variable de estado para cada uno de los input del form
-    const [getResponsableReserva, setResponsableReserva] = useState('')
-    const [getContactoReserva, setContactoReserva] = useState('')
-    const [getCorreoReserva, setCorreoReserva] = useState('')
-    const [getApartamentoReserva, setApartamentoReserva] = useState('')
-    const [getDiaReserva, setDiaReserva] = useState('')
-    const [getHoraReserva, setHoraReserva] = useState('')
-    const [getConsideracionesReserva, setConsideracionReserva] = useState('')
+  const [formData, setFormData] = useState({
+    responsable: "",
+    contacto: "",
+    correo: "",
+    apartamento: "",
+    diaReserva: "",
+    horaReserva: "",
+    consideraciones: "",
+  });
 
-    //2. cerar una variable de estado para almacenar todos los datos formulario una vez se validaron (JSON)
-    const [getdatosFormulario, setDatosFormulario] = useState('')
+  const [formularioHaSidoEnviado, setFormularioHaSidoEnviado] = useState(false);
 
-    //3. Crear una variable de estado para controlar el estado de envio de datos del formualio
-    const [formualrioHaSidoEnviado, setFormularioHaSidoEnviado] = useState(false)
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      diaReserva: dia || fecha || "",
+      horaReserva: hora || "",
+    }));
+    if (espacio) {
+      setSelectedSpace(espacio);
+    }
+  }, [dia, hora, fecha, espacio]);
 
+  useEffect(() => {
+    if (formularioHaSidoEnviado) {
+      console.log("Valor recibido en location.state.espacio:", espacio);
+      console.log("Propiedad nombreEspacio:", espacio?.nombreEspacio);
+      console.log("Enviando datos al API:", formData);
+    }
+  }, [formularioHaSidoEnviado, formData, espacio]);
 
-    const receptor=useLocation()
-    const {dia,hora}=receptor.state || {}
-    useEffect(()=>{
-        if(dia&&hora){
-            setDiaReserva(dia)
-            setHoraReserva(hora)
-        }
-    },[dia,hora])
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }
 
-    //4. Una rutina para enviar los datos a un API
-    useEffect(() => {
-        //alert("nos fimos pal api") //coming soon...
-    }, [formualrioHaSidoEnviado])
+  function handleSubmit(e) {
+    e.preventDefault();
 
-    //5. una rutina para validar y capturar los datos del formulario (Crear JSON)
-    function capturarDatosFormulario() {
+    const camposRequeridos = [
+      "responsable",
+      "contacto",
+      "correo",
+      "apartamento",
+      "diaReserva",
+      "horaReserva",
+    ];
 
-        //capturar los datos que escriba el usuario
-        //ACTUALIZAR EL JSON CON LOS DATOS QUEMADOS
+    const hayCamposVacios = camposRequeridos.some(
+      (campo) => !formData[campo].trim()
+    );
+
+    if (hayCamposVacios) {
+      Swal.fire({
+        icon: "warning",
+        title: "Formulario incompleto",
+        text: "Por favor, completa todos los campos obligatorios.",
+      });
+      return;
     }
 
-    return (
+    setSelectedDate(formData.diaReserva);
+    setSelectedTime(formData.horaReserva);
+    setShowModal(true);
+  }
 
-        <>
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedSpace(null);
+    setSelectedDate("");
+    setSelectedTime("");
+    navegador("/booking");
+  };
 
-            <br /><br />
-            <section className="container">
-                <section className="row">
-                    <section className="col-12 col-md-8">
-                        <h3>Registra tu reserva</h3>
-                        <hr />
-                        <form className="border rounded p-4 shadow" onSubmit={capturarDatosFormulario}>
+  const handleReservar = () => {
+    setFormularioHaSidoEnviado(true);
+    agregarReserva({
+      dia: selectedDate,
+      hora: selectedTime,
+    });
+    Swal.fire({
+      title: `Reserva confirmada: \n${selectedSpace.nombreEspacio} para el \n${selectedDate}, \n${selectedTime}`,
+      icon: "success",
+    });
+    handleCloseModal();
+  };
 
-                            <div className="input-group mb-3">
-                                <span className="input-group-text">
-                                    <i className="bi bi-person-circle"></i>
-                                </span>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Responsable Reserva"
-                                    value={getResponsableReserva}
-                                    onChange={(evento)=>{setResponsableReserva(evento.target.value)}} 
-                                />
-                            </div>
+  return (
+    <>
+      <br />
+      <br />
+      <section className="container">
+        <section className="row">
+          <section className="col-12 col-md-8">
+            <h3>Registra tu reserva</h3>
+            <hr />
+            <form className="border rounded p-4 shadow" onSubmit={handleSubmit}>
+              <div className="input-group mb-3">
+                <span className="input-group-text">
+                  <i className="bi bi-person-circle"></i>
+                </span>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="responsable"
+                  placeholder="Responsable Reserva"
+                  value={formData.responsable}
+                  onChange={handleChange}
+                />
+              </div>
 
-                            <div className="input-group mb-3">
-                                <span className="input-group-text">
-                                    <i className="bi bi-phone-fill"></i>
-                                </span>
-                                <input type="number" className="form-control" placeholder="Contacto Reserva" />
-                            </div>
+              <div className="input-group mb-3">
+                <span className="input-group-text">
+                  <i className="bi bi-phone-fill"></i>
+                </span>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="contacto"
+                  placeholder="Contacto Reserva"
+                  value={formData.contacto}
+                  onChange={handleChange}
+                />
+              </div>
 
-                            <div className="input-group mb-3">
-                                <span className="input-group-text">
-                                    <i className="bi bi-envelope-fill"></i>
-                                </span>
-                                <input type="text" className="form-control" placeholder="Correo Contacto" />
-                            </div>
+              <div className="input-group mb-3">
+                <span className="input-group-text">
+                  <i className="bi bi-envelope-fill"></i>
+                </span>
+                <input
+                  type="email"
+                  className="form-control"
+                  name="correo"
+                  placeholder="Correo Contacto"
+                  value={formData.correo}
+                  onChange={handleChange}
+                />
+              </div>
 
-                            <div className="input-group mb-3">
-                                <span className="input-group-text">
-                                    <i className="bi bi-building-fill"></i>
-                                </span>
-                                <input type="number" className="form-control" placeholder="Apartamento Reserva" />
-                            </div>
+              <div className="input-group mb-3">
+                <span className="input-group-text">
+                  <i className="bi bi-building-fill"></i>
+                </span>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="apartamento"
+                  placeholder="Apartamento Reserva"
+                  value={formData.apartamento}
+                  onChange={handleChange}
+                />
+              </div>
 
-                            <div className="input-group mb-3">
-                                <span className="input-group-text">
-                                    <i className="bi bi-calendar-event-fill"></i>
-                                </span>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Dia Reserva" 
-                                    value={getDiaReserva}
-                                />
-                            </div>
+              <div className="input-group mb-3">
+                <span className="input-group-text">
+                  <i className="bi bi-calendar-event-fill"></i>
+                </span>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="diaReserva"
+                  placeholder="Día Reserva"
+                  value={formData.diaReserva}
+                  onChange={handleChange}
+                />
+              </div>
 
-                            <div className="input-group mb-3">
-                                <span className="input-group-text">
-                                    <i className="bi bi-clock-fill"></i>
-                                </span>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    placeholder="Hora Reserva" 
-                                    value={getHoraReserva}
-                                />
-                            </div>
+              <div className="input-group mb-3">
+                <span className="input-group-text">
+                  <i className="bi bi-clock-fill"></i>
+                </span>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="horaReserva"
+                  placeholder="Hora Reserva"
+                  value={formData.horaReserva}
+                  onChange={handleChange}
+                />
+              </div>
 
-                            <div className="mb-3">
-                                <div className="form-floating">
-                                    <textarea className="form-control"></textarea>
-                                    <label>Consideraciones</label>
-                                </div>
-                            </div>
+              <div className="mb-3">
+                <div className="form-floating">
+                  <textarea
+                    className="form-control"
+                    name="consideraciones"
+                    placeholder="Consideraciones"
+                    value={formData.consideraciones}
+                    onChange={handleChange}
+                  ></textarea>
+                  <label>Consideraciones</label>
+                </div>
+              </div>
 
-                            <button className="btn btn-outline-primary w-100" type="submit">Reservar</button>
+              <button className="btn btn-outline-primary w-100" type="submit">
+                Reservar
+              </button>
+            </form>
+          </section>
 
-                        </form>
+          <section className="col-12 col-md-4 align-self-center">
+            <img
+              src="../../../../src/assets/img/reserva.webp"
+              alt="foto"
+              className="img-fluid"
+            />
+          </section>
+        </section>
+      </section>
 
-                    </section>
-                    <section className="col-12 col-md-4 align-self-center">
-                        <img src="../../../../src/assets/img/reserva.webp" alt="foto" className="img-fluid" />
-                    </section>
-                </section>
-            </section>
-
-
-        </>
-    )
-
+      {/* Modal de Confirmación */}
+      <Modal show={showModal} onHide={handleCloseModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar Reserva</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            <strong>Espacio:</strong>{" "}
+            {selectedSpace?.nombreEspacio || "No especificado"}
+          </p>
+          <p>
+            <strong>Fecha:</strong> {selectedDate}
+          </p>
+          <p>
+            <strong>Hora:</strong> {selectedTime}
+          </p>
+          <p>¿Deseas confirmar esta reserva?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Cancelar
+          </Button>
+          <Button variant="primary" onClick={handleReservar}>
+            Confirmar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
 }
