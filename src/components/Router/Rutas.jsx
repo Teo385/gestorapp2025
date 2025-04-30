@@ -5,6 +5,7 @@ import {Booking} from "../pages/Booking/Booking"
 import { FormularioReserva } from "../common/FormularioReserva/FormularioReserva"
 import { Error } from "../pages/Error/Error"
 import { Menu } from "../common/Menu/Menu"
+import { Galeria } from "../pages/Galeria/Galeria"
 
 
 const RutasConMenu = () => {
@@ -26,6 +27,7 @@ const RutasConMenu = () => {
           <Route path="/dashboard" element={<DashBoard />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/formulario" element={<FormularioReserva />} />
+          <Route path="/galeria" element={<Galeria />} />
         </Route>
         <Route path="*" element={<Error />} />
       </Routes>

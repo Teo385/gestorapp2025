@@ -11,7 +11,7 @@ export function Booking() {
     const [selectedSpace, setSelectedSpace] = useState(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-        const navegador = useNavigate()
+    const navegador = useNavigate()
 
     const handleOpenModal = (espacio) => {
         setSelectedSpace(espacio);
