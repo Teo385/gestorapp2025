@@ -39,7 +39,7 @@ export function Menu() {
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/formulario">
-                  Prueba del formulario
+                  Formulario
                 </Link>
               </li>
               <li className="nav-item">
